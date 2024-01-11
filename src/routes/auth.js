@@ -7,7 +7,6 @@ import { User } from '../models/index.js';
 passport.use(new LocalStrategy({ usernameField: 'email' }, async function verify(email, password, cb) {
   try {
     const user = await User.findOne({ where: { email } });
-    console.log('email', user.id);
     if (user === null) {
       return cb(null, false, { message: 'Incorrect username or password.' });
     }
@@ -40,7 +39,6 @@ router.get('/login', (_, res) => {
 });
 
 router.post('/login/password', (req, res, next) => {
-  console.log(req.body); 
   next();
 }, passport.authenticate('local', {
   successRedirect: '/',

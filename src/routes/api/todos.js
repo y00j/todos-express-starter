@@ -21,7 +21,7 @@ router.get('/todos', async (req, res) => {
   })));
 })
 
-router.post('/todo', async (req, res) => {
+router.post('/todos', async (req, res) => {
   if (!req.user) {
     return res.json({
       error: 'user not logged in'
@@ -47,7 +47,7 @@ router.post('/todo', async (req, res) => {
   })
 })
 
-router.get('/todo/:id', async (req, res, next) => {
+router.get('/todos/:id', async (req, res, next) => {
   if (!req.user) {
     return next(new Error('not logged in'))
   }
@@ -70,7 +70,7 @@ router.get('/todo/:id', async (req, res, next) => {
   });
 })
 
-router.patch('/todo/:id/completed', async (req, res, next) => {
+router.patch('/todos/:id/toggle', async (req, res, next) => {
   if (!req.user) {
     return next(new Error('not logged in'))
   }
@@ -85,15 +85,39 @@ router.patch('/todo/:id/completed', async (req, res, next) => {
       error: "Invalid Todo"
     })
   }
-  
-  if (req.body.completed === null) {
+
+  todo.completed = !todo.completed;
+  await todo.save();
+  todo = await todo.reload();
+
+  return res.json(todo)
+})
+
+router.patch('/todos/:id', async (req, res, next) => {
+  console.log('here', req.params.id)
+  if (!req.user) {
+    return next(new Error('not logged in'))
+  }
+  let todo = await Todo.findOne({
+    where: {
+      id: req.params.id,
+      userId: req.user.id,
+  }})
+
+  if (!todo) {
     return res.json({
-      error: "No completed field"
+      error: "Invalid Todo"
     })
   }
 
-  todo.completed = req.body.completed;
-  await todo.save();
+  if (!req.body.title) {
+    return res.json({
+      error: 'no todo title'
+    });
+  }
+
+  todo.title = req.body.title;
+  await todo.save()
   todo = await todo.reload();
 
   return res.json({
@@ -103,7 +127,7 @@ router.patch('/todo/:id/completed', async (req, res, next) => {
   })
 })
 
-router.delete('/todo/:id', async(req, res) => {
+router.delete('/todos/:id', async(req, res) => {
   if (!req.user) {
     return res.json({error: 'not logged in'});
   }
@@ -122,7 +146,7 @@ router.delete('/todo/:id', async(req, res) => {
 
   await todo.destroy();
 
-  return res.json("Successfully deleted");
+  return res.json({id: todo.id, delete: true});
 })
 
 export default router;

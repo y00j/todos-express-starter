@@ -4,7 +4,7 @@
   "private": true,
   "description": "Starter todo app using Express, Passport, and SQLite for sign in.",
   "main": "app.js",
-  "type": "module", 
+  "type": "module",
   "keywords": [
     "example",
     "express",
@@ -39,6 +39,7 @@
     "connect-session-sequelize": "^7.1.7",
     "connect-sqlite3": "^0.9.13",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^8.6.0",
     "ejs": "^3.1.9",

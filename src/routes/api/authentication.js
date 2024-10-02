@@ -26,7 +26,7 @@ router.post('/signup', async (req, res, next) => {
             email,
             hashedPassword,
             salt,
-        }); 
+        });
 
         req.login(user, (err) => {
             if (err) { return next(err); }
@@ -38,14 +38,27 @@ router.post('/signup', async (req, res, next) => {
     });
 })
 
+router.get('/user', async (req, res) => {
+    if (!req.user) {
+        return res.json({ user: null });
+
+    }
+    const user = await User.findOne({ where: { email: req.user.email } });
+    if (user === null) {
+        return res.json({ user: null });
+
+    }
+    res.json({ user: user.email })
+})
+
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    res.json({ email: req.user.email, status: 'logged in' });
+    res.json({ email: req.user.email });
 });
 
 router.post('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) { return next(err); }
-        res.json('logged out');
+        res.json({loggedOut: true});
     });
 });
 

@@ -18,11 +18,17 @@ import apiTodoRouter from './src/routes/api/todos.js';
 import apiAuthRouter from './src/routes/api/authentication.js';
 import sequelize from './src/models/index.js';
 
+import cors from 'cors';
 const SequelizeStore = connectSequelize(session.Store);
 const app = express();
 
 const port = 3000;
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true,
+}
 
+app.use(cors(corsOptions));
 app.use(
   session({
     secret: process.env.SECRET_KEY,
